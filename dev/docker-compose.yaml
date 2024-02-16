@@ -20,8 +20,6 @@ services:
       - "-c"
       - "chmod u+x /mnt/mongo_import.sh && /mnt/mongo_import.sh"
     user: "0:0"
-    depends_on:
-      - mongodb
     restart: on-failure
     profiles:
       - never
@@ -32,6 +30,8 @@ services:
       - DATABASE=be
     profiles:
       - be
+    depends_on:
+      - mongodb
 
   mongodb_seed_be_next:
     extends: mongodb_seed
@@ -39,6 +39,8 @@ services:
       - DATABASE=be_next
     profiles:
       - be_next
+    depends_on:
+      - mongodb
 
   be:
     build: ../backend/.
