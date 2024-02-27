@@ -9,6 +9,8 @@ services:
       - be
       - be_next
       - oi
+    ports:
+      - 27017:27017
 
   mongodb_seed:
     image: mongo
