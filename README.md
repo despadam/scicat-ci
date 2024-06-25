@@ -1,3 +1,8 @@
+### Fork-related instructions:
+- copy functionalAccounts.json under scicat-backend-next directory
+
+---
+
 # scicat-ci
 CI related information to deploy SciCat at PSI.
 
