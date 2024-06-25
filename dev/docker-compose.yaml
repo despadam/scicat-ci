@@ -80,18 +80,38 @@ services:
     profiles:
       - fe
 
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    labels:
+      - traefik.http.services.rabbitmq.loadbalancer.server.port=15672
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    volumes:
+      - rabbitmq_data:/bitnami
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      start_period: 5s
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    profiles:
+      - rabbitmq
+
   be_next:
     build:
       context: ../scicat-backend-next/.
       target: dev
     depends_on:
       - mongodb
+      - rabbitmq
     ports:
       - 3000:3000
     volumes:
       - ../scicat-backend-next:/home/node/app
       - /home/node/app/node_modules
       - /home/node/app/dist
+      - ./config/backend-next/component-config.local.json:/home/node/app/server/component-config.local.json
     env_file: ./config/backend_next/.env
     command: /bin/sh -c "while true; do sleep 600; done"
     profiles:
@@ -169,4 +189,6 @@ services:
 
 volumes:
   mongodb_data:
+    driver: local
+  rabbitmq_data:
     driver: local
