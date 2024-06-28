@@ -94,6 +94,24 @@ services:
     profiles:
       - never 
 
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    labels:
+      - traefik.http.services.rabbitmq.loadbalancer.server.port=15672
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    volumes:
+      - rabbitmq_data:/bitnami
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      start_period: 5s
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    profiles:
+      - be_next
+
   test_be_next:
     extends: be_next_base
     depends_on:
@@ -108,6 +126,7 @@ services:
     extends: be_next_base
     depends_on:
       - mongodb
+      - rabbitmq
     profiles:
       - be_next
 
@@ -196,4 +215,6 @@ services:
 
 volumes:
   mongodb_data:
+    driver: local
+  rabbitmq_data:
     driver: local
